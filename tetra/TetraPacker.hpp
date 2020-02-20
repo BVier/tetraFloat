@@ -5,7 +5,7 @@
 
 struct Norm{
 	Vec3d normVector;
-	double value;
+	double heightOfPlane;
 	bool isAbove(Vec3d);
 };
 

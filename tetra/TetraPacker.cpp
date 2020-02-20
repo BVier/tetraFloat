@@ -5,7 +5,7 @@
 	NORM
 */
 bool Norm::isAbove(Vec3d point) {
-	return dot(point, this->normVector) >= this->value;
+	return dot(point, this->normVector) >= this->heightOfPlane;
 }
 
 /*
@@ -14,9 +14,9 @@ bool Norm::isAbove(Vec3d point) {
 Tetra::Tetra(Vec3d corners[4])
 {
 	this->norms[0] = computeNorm(corners[0], corners[1], corners[2]);
-	this->norms[0] = computeNorm(corners[0], corners[2], corners[3]);
-	this->norms[0] = computeNorm(corners[0], corners[3], corners[1]);
-	this->norms[0] = computeNorm(corners[1], corners[3], corners[2]);
+	this->norms[1] = computeNorm(corners[0], corners[2], corners[3]);
+	this->norms[2] = computeNorm(corners[0], corners[3], corners[1]);
+	this->norms[3] = computeNorm(corners[1], corners[3], corners[2]);
 	
 	this->valid = true;
 }
@@ -25,14 +25,12 @@ bool Tetra::contains(Vec3d p) {
 	if (!this->valid) {
 		return false;
 	}
-	bool valid = true;
-	for (int i = 0; i < 4; i++) {
-		valid &= this->norms[i].isAbove(p);
+
+	bool contains = true;
+	for (int i = 0; i < 4 && contains; i++) {
+		contains &= this->norms[i].isAbove(p);
 	}
-	if (valid) {
-		return true;
-	}
-	return false;
+	return contains;
 }
 
 
@@ -53,6 +51,7 @@ Octagon::Octagon(Vec3d corners[8])
 		last = next;
 	}
 }
+
 bool Octagon::contains(Vec3d p)
 {
 	for (int i = 0; i < 6; i++) {
